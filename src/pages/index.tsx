@@ -46,8 +46,8 @@ export default function Canvas() {
         /* Center middle of element to mouse position */
         let width = 100
         let height = 100
-        let placement_x = x + (width / 2)
-        let placement_y = y + (height / 2)
+        let placement_x = x - (width / 2)
+        let placement_y = y - (height / 2)
         let text_element = React.createElement("p", {}, "Hello World")
         let new_element = React.createElement("div", {
             style: {
