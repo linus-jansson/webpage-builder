@@ -27,16 +27,9 @@ function elementObjectToElementString(elementObject: React.ReactElement<any, str
 
 }
 
-export default function Canvas() {
-    const [canvasContent, setCanvasContent] = useState<React.ReactElement<any, string | React.JSXElementConstructor<any>>[]>([]);
+export default function Canvas({ elements }: {
+    elements: React.ReactElement<any, string | React.JSXElementConstructor<any>>[]
+}) {
 
-    return (
-        <div className="h-screen">
-
-            <button id="test-add-element" onClick={() => {
-                setCanvasContent(prev => [...prev, <h1 key={prev.length + 1}><span>test</span></h1>]);
-            }}>add test element</button>
-            {canvasContent && <div dangerouslySetInnerHTML={{ __html: elementObjectToElementString(canvasContent) }} />}
-        </div>
-    )
+    return elements && <div dangerouslySetInnerHTML={{ __html: elementObjectToElementString(elements) }} />
 }
