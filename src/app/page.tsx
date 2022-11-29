@@ -97,8 +97,14 @@ export default function MainPage() {
                         <>
                             <PlacableComponent Icon={BsTextareaT} text="Text Element" templateHTML={<><p>Text Element</p></>} onMouseDown={(e: any) => console.log(e)} />
                             <PlacableComponent Icon={BsCardImage} text="Image Element" templateHTML={<><img src="/placeholder.png"></img></>} />
-
                         </>
+                        <div>
+                            <button id="test-add-element" onClick={() => {
+                                setCanvasElements(prev => [...prev, <h1 key={prev.length + 1}><span>test</span></h1>]);
+                            }}>
+                                add p element
+                            </button>
+                        </div>
                     </div>
                 </div >
 
@@ -142,18 +148,13 @@ export default function MainPage() {
                         </div>
                     </div> */}
 
-                    < div className="flex flex-row gap-1 " >
+                    <div className="flex flex-row gap-1 " >
                         <button className="p-2 rounded-lg shadow-lg bg-zinc-200">undo</button>
                         |
                         <button className="p-2 rounded-lg shadow-lg bg-zinc-200">redo</button>
 
-                    </div >
-
-                    <div>
-                        <button id="test-add-element" onClick={() => {
-                            setCanvasElements(prev => [...prev, <h1 key={prev.length + 1}><span>test</span></h1>]);
-                        }}>add test element p</button>
                     </div>
+
                 </div >
                 <div className="block min-h-screen p-4 border-4 border-black z-1 bg-zinc-900" ref={canvasRef} >
 
