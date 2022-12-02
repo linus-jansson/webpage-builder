@@ -1,20 +1,15 @@
 "use client";
 
 import Canvas from "../components/Canvas"
-import { SettingsMenuHamburgerButton, SettingsMenu } from "../components/Settings"
+import { useEffect, useRef, useReducer, useState, createElement } from "react";
 
-import { useEffect, useRef, useReducer, useState } from "react";
-
-import { FaBeer } from 'react-icons/fa';
 import { BsTextareaT, BsCardImage } from 'react-icons/bs';
-const DEBUG = true;
 
-
-const PlacableComponent = ({ Icon, text, templateHTML, onMouseDown }: any) => {
+const PlacableComponent = ({ Icon, text, templateHTML, onClick }: any) => {
     // const ComponentHTML = templateHTML;
 
     return (
-        <button className="flex items-center gap-x-3 felx-row" onMouseDown={onMouseDown}>
+        <button className="flex items-center gap-x-3 felx-row" onMouseUp={onClick}>
             <Icon size={32} />
             <span>{text}</span>
         </button>
@@ -22,42 +17,64 @@ const PlacableComponent = ({ Icon, text, templateHTML, onMouseDown }: any) => {
 
 }
 
+type componentReducerState = {
+    currentComponent: string,
+}
+
+const initialComponentNavbarState = {
+    currentComponent: "TEXT_ELEMENT"
+} as componentReducerState
+
+const ReducerTypes = {
+    SET_CURRENT_COMPONENT_TEXT: "SET_CURRENT_COMPONENT_TEXT",
+    SET_CURRENT_COMPONENT_IMAGE: "SET_CURRENT_COMPONENT_IMAGE",
+}
+
+function componentReducer(state: componentReducerState, action: any) {
+    switch (action.type) {
+        case ReducerTypes.SET_CURRENT_COMPONENT_TEXT:
+            console.log("chosen text")
+            return {
+                currentComponent: "TEXT_ELEMENT"
+            }
+        case ReducerTypes.SET_CURRENT_COMPONENT_IMAGE:
+            console.log("chosen image")
+            return {
+                currentComponent: "IMAGE_ELEMENT"
+            }
+        default:
+            throw new Error("Invalid action type")
+    }
+}
+
+function ComponentsNavbar({ currentComponentState, dispatch }: any) {
+
+    return (
+        < div className="absolute z-10 flex flex-row p-4 mt-auto mb-auto rounded-lg shadow-lg top-10 right-5 bg-zinc-300" >
+            <div className="flex flex-col gap-y-4">
+                <>
+                    <PlacableComponent Icon={BsTextareaT} text="Text Element" onClick={() => dispatch({ type: ReducerTypes.SET_CURRENT_COMPONENT_TEXT })} />
+                    <PlacableComponent Icon={BsCardImage} text="Image Element" onClick={() => dispatch({ type: ReducerTypes.SET_CURRENT_COMPONENT_IMAGE })} />
+                </>
+            </div>
+        </div >
+    )
+}
+
 
 export default function MainPage() {
-    const [canvasElements, setCanvasElements] = useState<React.ReactElement<any, string | React.JSXElementConstructor<any>>[]>([])
-    const canvasRef = useRef<HTMLDivElement>(null);
+    const [showSettingsMenu, setShowSettingsMenu] = useState(false);
 
-    const [showSettingsMenu, setShowSettingsMenu] = useState(true);
+    const [componentState, dispatch] = useReducer(componentReducer, initialComponentNavbarState)
 
     const toogtleSettingsMenu = () => {
         console.log("toggled");
         setShowSettingsMenu(prev => !prev);
-
     }
-
-    const mouseEnterHandler = (e: any) => {
-        console.log(e);
-    }
-
-
-    /* Use effect for mouse events */
-    useEffect(() => {
-        if (!canvasRef.current) return;
-
-
-        canvasRef.current.addEventListener('mouseenter', mouseEnterHandler)
-        canvasRef.current.addEventListener('mouseup', mouseEnterHandler)
-
-        return () => {
-            console.log("unmounting");
-
-            canvasRef.current?.removeEventListener('mouseenter', mouseEnterHandler);
-        }
-    }, [])
 
     return (
         <>
-            <div id='overlay' className={`relative z-10 h-screen ${((DEBUG) ? 'outline-1 outline-dotted outline-red' : '')}`}>
+            <div id='overlay' className={`relative z-10 h-screen`}>
                 <label className="absolute z-10 top-5 left-5">
                     <input type='checkbox' className='hidden' onChange={toogtleSettingsMenu} />
                     <div className="relative flex overflow-hidden items-center justify-center rounded-xl w-[50px] h-[50px] transform transition-all bg-zinc-300 ring-0 ring-gray-300 hover:ring-8 group-focus:ring-4 ring-opacity-30 duration-200 shadow-md">
@@ -91,22 +108,7 @@ export default function MainPage() {
 
 
                 {/* Component Navbar */}
-                < div className="absolute z-10 flex flex-row p-4 mt-auto mb-auto rounded-lg shadow-lg top-10 right-5 bg-zinc-300" >
-                    <div className="flex flex-col gap-y-4">
-
-                        <>
-                            <PlacableComponent Icon={BsTextareaT} text="Text Element" templateHTML={<><p>Text Element</p></>} onMouseDown={(e: any) => console.log(e)} />
-                            <PlacableComponent Icon={BsCardImage} text="Image Element" templateHTML={<><img src="/placeholder.png"></img></>} />
-                        </>
-                        <div>
-                            <button id="test-add-element" onClick={() => {
-                                setCanvasElements(prev => [...prev, <h1 key={prev.length + 1}><span>test</span></h1>]);
-                            }}>
-                                add p element
-                            </button>
-                        </div>
-                    </div>
-                </div >
+                <ComponentsNavbar currentComponentState={componentState} dispatch={dispatch} />
 
                 {/* middle menu */}
                 {
@@ -121,9 +123,9 @@ export default function MainPage() {
                                     {/* bottom icons */}
                                     <div className="flex justify-between mt-auto fl ex-row">
                                         <div className="flex flex-row justify-around w-1/3">
-                                            <p> repo </p>
-                                            <p> issues </p>
-                                            <p> mail </p>
+                                            <p>repo</p>
+                                            <p>issues</p>
+                                            <p>mail</p>
                                         </div>
                                         <p>Copyright &copy; Linus J {new Date().getFullYear()}</p>
                                     </div>
@@ -156,11 +158,9 @@ export default function MainPage() {
                     </div>
 
                 </div >
-                <div className="block min-h-screen p-4 border-4 border-black z-1 bg-zinc-900" ref={canvasRef} >
+                <div className="block border-black min-h-screenborder-4 z-1 bg-zinc-900">
 
-                    <Canvas
-                        elements={canvasElements}
-                    />
+                    <Canvas componentState={componentState} canvasSettings={{}} />
                 </div>
             </div >
 
