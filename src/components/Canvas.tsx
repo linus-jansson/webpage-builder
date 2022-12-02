@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useReducer, useState, createElement } from "react";
+import { useEffect, useRef, useReducer, useState, createElement, use } from "react";
 
 import { renderToString } from "react-dom/server";
 
@@ -37,30 +37,39 @@ export default function Canvas({ componentState, canvasSettings }: {
 
         if (!e.shiftKey) return;
 
+        let defaultWidth = 100;
+        let defaultHeight = 100;
+
         console.log("mouse pressed in canvas");
         switch (componentState.currentComponent) {
             case "TEXT_ELEMENT":
                 setCanvasElements(prev => [...prev, createElement("p", {
                     style: {
                         position: "absolute",
-                        top: e.clientY,
-                        left: e.clientX,
+                        top: e.clientY - 50,
+                        left: e.clientX - 50,
                         width: "100px",
                         height: "100px",
-                    }
+                    },
+                    onClick: (e: any) => { console.log(e); console.log("cliecked"); }
                 }, "text element")])
                 break;
             case "IMAGE_ELEMENT":
-                setCanvasElements(prev => [...prev, createElement("img", {
-                    src: "/placeholder.png",
-                    width: "100px",
-                    height: "100px",
-                    style: {
-                        position: "absolute",
-                        top: e.clientY,
-                        left: e.clientX,
+                setCanvasElements(prev => [...prev,
+                <img
+                    src="/placeholder.png"
+                    width={200}
+                    height={200}
+                    onClick={(e) => console.log(e)}
+                    style={
+                        {
+                            position: 'absolute',
+                            top: e.clientY - 100,
+                            left: e.clientX - 100
+                        }
                     }
-                }, null)])
+                />
+                ])
                 break;
             default:
                 console.log("No state set for current component");
