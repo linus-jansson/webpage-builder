@@ -28,6 +28,7 @@ const initialComponentNavbarState = {
 const ReducerTypes = {
     SET_CURRENT_COMPONENT_TEXT: "SET_CURRENT_COMPONENT_TEXT",
     SET_CURRENT_COMPONENT_IMAGE: "SET_CURRENT_COMPONENT_IMAGE",
+    SET_CURRENT_COMPONENT_DEBUG_BUTTON: "SET_CURRENT_COMPONENT_DEBUG_BUTTON",
 }
 
 function componentReducer(state: componentReducerState, action: any) {
@@ -42,6 +43,11 @@ function componentReducer(state: componentReducerState, action: any) {
             return {
                 currentComponent: "IMAGE_ELEMENT"
             }
+        case ReducerTypes.SET_CURRENT_COMPONENT_DEBUG_BUTTON:
+            console.log("chosen debug button")
+            return {
+                currentComponent: "DEBUG_BUTTON"
+            }
         default:
             throw new Error("Invalid action type")
     }
@@ -55,6 +61,8 @@ function ComponentsNavbar({ currentComponentState, dispatch }: any) {
                 <>
                     <PlacableComponent Icon={BsTextareaT} text="Text Element" onClick={() => dispatch({ type: ReducerTypes.SET_CURRENT_COMPONENT_TEXT })} />
                     <PlacableComponent Icon={BsCardImage} text="Image Element" onClick={() => dispatch({ type: ReducerTypes.SET_CURRENT_COMPONENT_IMAGE })} />
+                    <PlacableComponent Icon={BsCardImage} text="Debug Button" onClick={() => dispatch({ type: ReducerTypes.SET_CURRENT_COMPONENT_DEBUG_BUTTON })} />
+
                 </>
             </div>
         </div >
@@ -109,6 +117,10 @@ export default function MainPage() {
 
                 {/* Component Navbar */}
                 <ComponentsNavbar currentComponentState={componentState} dispatch={dispatch} />
+
+                {/* Placed element props settings */}
+                {/* Will be passed from Canvas->PlacedComponent */}
+                {/* If isSelected===true in placedComponent Show prop settings */}
 
                 {/* middle menu */}
                 {
